@@ -11,22 +11,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download project
+      - name: Download repository
         uses: actions/checkout@v4
 
-      - name: Unzip Android project
+      - name: Find corrected project
         run: |
-          unzip -o GardenWorkTracker-UPLOAD-TO-APK-BUILDER.zip
-
-      - name: Fix Android project
-        run: |
-          # Target Android 14 so Android 15 does not force edge-to-edge.
-          sed -i 's/targetSdk 35/targetSdk 34/' \
-            GardenWorkTracker_Finished/app/build.gradle
-
-          # Add missing File import.
-          sed -i 's/import java.util.\*;/import java.util.*;import java.io.File;/' \
-            GardenWorkTracker_Finished/app/src/main/java/com/gardenworktracker/MainActivity.java
+          unzip -o GardenWorkTracker-CORRECTED-ANDROID-APK.zip
+          
+          echo "Project contents:"
+          find . -maxdepth 3 -type f | head -100
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
@@ -47,5 +40,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: GardenWorkTracker-APK
+          name: GardenWorkTracker-APK-CORRECTED
           path: GardenWorkTracker_Finished/app/build/outputs/apk/debug/app-debug.apk
