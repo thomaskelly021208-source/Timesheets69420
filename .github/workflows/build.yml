@@ -1,4 +1,4 @@
-name: Build Garden Work Tracker — Rolling Sheets & UI
+name: Build Garden Work Tracker — Fixed UI + Rolling Sheets
 
 on:
   push:
@@ -13,10 +13,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Extract new Garden Work Tracker
+      - name: Extract fixed Garden Work Tracker
         run: |
           rm -rf GardenWorkTracker_Finished
-          unzip -o GardenWorkTracker-ROLLING-SHEETS-UI.zip
+          unzip -o GardenWorkTracker-ROLLING-SHEETS-UI-FIXED.zip
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -34,8 +34,8 @@ jobs:
         run: |
           gradle assembleDebug --no-daemon
 
-      - name: Upload Rolling Sheets APK
+      - name: Upload Fixed UI APK
         uses: actions/upload-artifact@v4
         with:
-          name: GardenWorkTracker-ROLLING-SHEETS-APK
+          name: GardenWorkTracker-FIXED-UI-APK
           path: GardenWorkTracker_Finished/app/build/outputs/apk/debug/app-debug.apk
