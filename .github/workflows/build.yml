@@ -11,17 +11,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Find corrected project
+      - name: Extract REAL FIX
         run: |
-          unzip -o GardenWorkTracker-CORRECTED-ANDROID-APK.zip
-          
-          echo "Project contents:"
-          find . -maxdepth 3 -type f | head -100
+          rm -rf GardenWorkTracker_Finished
+          unzip -o GardenWorkTracker-REAL-FIX.zip
 
-      - name: Set up Java 17
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -34,11 +32,10 @@ jobs:
 
       - name: Build APK
         working-directory: GardenWorkTracker_Finished
-        run: |
-          gradle assembleDebug --no-daemon
+        run: gradle assembleDebug --no-daemon
 
-      - name: Upload APK
+      - name: Upload REAL FIX APK
         uses: actions/upload-artifact@v4
         with:
-          name: GardenWorkTracker-APK-CORRECTED
+          name: GardenWorkTracker-REAL-FIX-APK
           path: GardenWorkTracker_Finished/app/build/outputs/apk/debug/app-debug.apk
