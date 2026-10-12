@@ -1,1 +1,36 @@
+name: Build Garden Work Tracker APK
 
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download repository
+        uses: actions/checkout@v4
+
+      - name: Unzip Android project
+        run: |
+          unzip -o GardenWorkTracker-UPLOAD-TO-APK-BUILDER.zip
+          cd GardenWorkTracker_Finished
+          chmod +x gradlew
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Build APK
+        working-directory: GardenWorkTracker_Finished
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Save APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: GardenWorkTracker-APK
+          path: GardenWorkTracker_Finished/app/build/outputs/apk/debug/app-debug.apk
