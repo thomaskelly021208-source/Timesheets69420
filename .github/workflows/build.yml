@@ -1,4 +1,4 @@
-name: Build Garden Work Tracker — FINAL UI FIX
+name: Build Garden Work Tracker — Complete
 
 on:
   push:
@@ -13,10 +13,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Extract FINAL FIX
+      - name: Extract complete Garden Work Tracker
         run: |
           rm -rf GardenWorkTracker_Finished
-          unzip -o GardenWorkTracker-ROLLING-SHEETS-UI-FINAL-FIX.zip
+          unzip -o GardenWorkTracker-COMPLETE-TREE-UI-TIMESHEET.zip
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -34,8 +34,8 @@ jobs:
         run: |
           gradle assembleDebug --no-daemon
 
-      - name: Upload FINAL FIX APK
+      - name: Upload complete APK
         uses: actions/upload-artifact@v4
         with:
-          name: GardenWorkTracker-FINAL-FIX-APK
+          name: GardenWorkTracker-COMPLETE-APK
           path: GardenWorkTracker_Finished/app/build/outputs/apk/debug/app-debug.apk
