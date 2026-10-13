@@ -15,8 +15,7 @@ jobs:
 
       - name: Extract fixed app source
         run: |
-          rm -rf GardenWorkTracker_Finished
-          unzip -o GardenWorkTracker-FIX-TOP3.zip
+          unzip -o GardenWorkTracker-FIX-TOP3.zip -d GardenWorkTracker_Finished
 
       - name: Set up Java
         uses: actions/setup-java@v4
