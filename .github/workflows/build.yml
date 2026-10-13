@@ -1,4 +1,4 @@
-name: Build Garden Work Tracker — Complete
+name: Build Garden Work Tracker — GPS Customer Fix
 
 on:
   push:
@@ -13,10 +13,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Extract complete Garden Work Tracker
+      - name: Extract updated app source
         run: |
           rm -rf GardenWorkTracker_Finished
-          unzip -o GardenWorkTracker-COMPLETE-TREE-UI-TIMESHEET.zip
+          unzip -o GardenWorkTracker-GPS-CUSTOMER-FIX.zip -d GardenWorkTracker_Finished
+          
+          # If the ZIP already contains the project folder, move its contents up
+          if [ -d "GardenWorkTracker_Finished/GardenWorkTracker_Finished" ]; then
+            mv GardenWorkTracker_Finished/GardenWorkTracker_Finished/* GardenWorkTracker_Finished/
+            mv GardenWorkTracker_Finished/GardenWorkTracker_Finished/.[!.]* GardenWorkTracker_Finished/ 2>/dev/null || true
+            rm -rf GardenWorkTracker_Finished/GardenWorkTracker_Finished
+          fi
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -31,11 +38,10 @@ jobs:
 
       - name: Build APK
         working-directory: GardenWorkTracker_Finished
-        run: |
-          gradle assembleDebug --no-daemon
+        run: gradle assembleDebug --no-daemon
 
-      - name: Upload complete APK
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: GardenWorkTracker-COMPLETE-APK
+          name: GardenWorkTracker-GPS-CUSTOMER-FIX-APK
           path: GardenWorkTracker_Finished/app/build/outputs/apk/debug/app-debug.apk
