@@ -1,4 +1,4 @@
-name: Build Garden Work Tracker — GPS Customer Fix
+name: Build Garden Work Tracker — Top 3 Fixes
 
 on:
   push:
@@ -13,17 +13,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Extract updated app source
+      - name: Extract fixed app source
         run: |
           rm -rf GardenWorkTracker_Finished
-          unzip -o GardenWorkTracker-GPS-CUSTOMER-FIX.zip -d GardenWorkTracker_Finished
-          
-          # If the ZIP already contains the project folder, move its contents up
-          if [ -d "GardenWorkTracker_Finished/GardenWorkTracker_Finished" ]; then
-            mv GardenWorkTracker_Finished/GardenWorkTracker_Finished/* GardenWorkTracker_Finished/
-            mv GardenWorkTracker_Finished/GardenWorkTracker_Finished/.[!.]* GardenWorkTracker_Finished/ 2>/dev/null || true
-            rm -rf GardenWorkTracker_Finished/GardenWorkTracker_Finished
-          fi
+          unzip -o GardenWorkTracker-FIX-TOP3.zip
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -43,5 +36,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: GardenWorkTracker-GPS-CUSTOMER-FIX-APK
+          name: GardenWorkTracker-FIX-TOP3-APK
           path: GardenWorkTracker_Finished/app/build/outputs/apk/debug/app-debug.apk
