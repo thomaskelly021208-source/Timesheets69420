@@ -1,4 +1,4 @@
-name: Build Garden Work Tracker — Worker Breaks
+name: Build Garden Work Tracker — Worker Breaks Fixed
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout
@@ -15,10 +15,10 @@ jobs:
 
       - name: Extract worker-breaks app source
         run: |
-          unzip -o GardenWorkTracker-WORKER-BREAKS.zip -d GardenWorkTracker_Finished
+          unzip -o GardenWorkTracker-WORKER-BREAKS-FIXED.zip -d GardenWorkTracker_Finished
 
       - name: Set up Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
@@ -35,5 +35,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: GardenWorkTracker-WORKER-BREAKS-APK
+          name: GardenWorkTracker-WORKER-BREAKS-FIXED-APK
           path: GardenWorkTracker_Finished/app/build/outputs/apk/debug/app-debug.apk
