@@ -1,4 +1,4 @@
-name: Build Garden Work Tracker — Top 3 Fixes
+name: Build Garden Work Tracker — Worker Breaks
 
 on:
   push:
@@ -13,9 +13,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Extract fixed app source
+      - name: Extract worker-breaks app source
         run: |
-          unzip -o GardenWorkTracker-FIX-TOP3.zip -d GardenWorkTracker_Finished
+          unzip -o GardenWorkTracker-WORKER-BREAKS.zip -d GardenWorkTracker_Finished
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -35,5 +35,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: GardenWorkTracker-FIX-TOP3-APK
+          name: GardenWorkTracker-WORKER-BREAKS-APK
           path: GardenWorkTracker_Finished/app/build/outputs/apk/debug/app-debug.apk
