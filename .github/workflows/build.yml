@@ -1,4 +1,4 @@
-name: Build Garden Work Tracker — Worker Breaks Final
+name: Build Garden Work Tracker - Daily Team
 
 on:
   push:
@@ -10,12 +10,35 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Extract app source
+      - name: Find and verify app ZIP
         run: |
-          unzip -o GardenWorkTracker-WORKER-BREAKS-FINAL.zip -d GardenWorkTracker_Finished
+          ZIP="GardenWorkTracker-DAILY-TEAM.zip"
+
+          echo "Repository contents:"
+          ls -lah
+
+          if [ ! -f "$ZIP" ]; then
+            echo "ERROR: $ZIP was not found."
+            echo "ZIP files actually present:"
+            find . -maxdepth 2 -type f -name "*.zip" -print
+            exit 1
+          fi
+
+          unzip -t "$ZIP"
+
+      - name: Extract app
+        run: |
+          rm -rf GardenWorkTracker_Finished
+          mkdir GardenWorkTracker_Finished
+          unzip -o GardenWorkTracker-DAILY-TEAM.zip -d GardenWorkTracker_Finished
+
+      - name: Check Android project
+        run: |
+          test -f GardenWorkTracker_Finished/settings.gradle
+          test -d GardenWorkTracker_Finished/app
 
       - name: Set up Java
         uses: actions/setup-java@v5
@@ -35,5 +58,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: GardenWorkTracker-WORKER-BREAKS-FINAL-APK
+          name: GardenWorkTracker-DAILY-TEAM-APK
           path: GardenWorkTracker_Finished/app/build/outputs/apk/debug/app-debug.apk
