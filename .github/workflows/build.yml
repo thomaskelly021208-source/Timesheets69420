@@ -1,47 +1,55 @@
-name: Build Garden Work Tracker - Daily Team
+name: Build Garden Work Tracker APK
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Find and verify app ZIP
+      - name: Find ZIP
         run: |
-          ZIP="GardenWorkTracker-DAILY-TEAM.zip"
-
-          echo "Repository contents:"
-          ls -lah
+          ZIP="GardenWorkTracker-CUSTOMER-HOURS-FIXED.zip"
 
           if [ ! -f "$ZIP" ]; then
-            echo "ERROR: $ZIP was not found."
-            echo "ZIP files actually present:"
-            find . -maxdepth 2 -type f -name "*.zip" -print
+            echo "ERROR: $ZIP not found"
+            echo "Files in repository:"
+            ls -la
+            echo "Searching:"
+            find . -maxdepth 3 -type f
             exit 1
           fi
 
+          echo "Found $ZIP"
+
+      - name: Verify ZIP
+        run: |
+          ZIP="GardenWorkTracker-CUSTOMER-HOURS-FIXED.zip"
           unzip -t "$ZIP"
 
-      - name: Extract app
+      - name: Extract project
         run: |
+          ZIP="GardenWorkTracker-CUSTOMER-HOURS-FIXED.zip"
           rm -rf GardenWorkTracker_Finished
           mkdir GardenWorkTracker_Finished
-          unzip -o GardenWorkTracker-DAILY-TEAM.zip -d GardenWorkTracker_Finished
+          unzip -q "$ZIP" -d GardenWorkTracker_Finished
+
+          echo "Extracted files:"
+          find GardenWorkTracker_Finished -maxdepth 3 -type f | sort
 
       - name: Check Android project
         run: |
-          test -f GardenWorkTracker_Finished/settings.gradle
+          test -f GardenWorkTracker_Finished/settings.gradle || \
+          test -f GardenWorkTracker_Finished/settings.gradle.kts
+
           test -d GardenWorkTracker_Finished/app
 
-      - name: Set up Java
-        uses: actions/setup-java@v5
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
@@ -53,10 +61,26 @@ jobs:
 
       - name: Build APK
         working-directory: GardenWorkTracker_Finished
-        run: gradle assembleDebug --no-daemon
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Find APK
+        run: |
+          APK=$(find GardenWorkTracker_Finished -type f -name "*.apk" | head -n 1)
+
+          if [ -z "$APK" ]; then
+            echo "ERROR: No APK was produced"
+            find GardenWorkTracker_Finished -type f | sort
+            exit 1
+          fi
+
+          echo "APK found: $APK"
+          cp "$APK" GardenWorkTracker-CUSTOMER-HOURS-FIXED-APK.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: GardenWorkTracker-DAILY-TEAM-APK
-          path: GardenWorkTracker_Finished/app/build/outputs/apk/debug/app-debug.apk
+          name: GardenWorkTracker-CUSTOMER-HOURS-FIXED-APK
+          path: GardenWorkTracker-CUSTOMER-HOURS-FIXED-APK.apk
+          if-no-files-found: error
