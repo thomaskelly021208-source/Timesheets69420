@@ -8,45 +8,45 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Find ZIP
+      - name: Check ZIP
         run: |
           ZIP="GardenWorkTracker-CUSTOMER-HOURS-FIXED.zip"
 
+          echo "Looking for: $ZIP"
+
           if [ ! -f "$ZIP" ]; then
-            echo "ERROR: $ZIP not found"
-            echo "Files in repository:"
+            echo "ERROR: ZIP not found"
             ls -la
-            echo "Searching:"
-            find . -maxdepth 3 -type f
             exit 1
           fi
 
-          echo "Found $ZIP"
-
-      - name: Verify ZIP
-        run: |
-          ZIP="GardenWorkTracker-CUSTOMER-HOURS-FIXED.zip"
+          echo "ZIP FOUND"
           unzip -t "$ZIP"
 
       - name: Extract project
         run: |
-          ZIP="GardenWorkTracker-CUSTOMER-HOURS-FIXED.zip"
           rm -rf GardenWorkTracker_Finished
           mkdir GardenWorkTracker_Finished
-          unzip -q "$ZIP" -d GardenWorkTracker_Finished
+          unzip -q "GardenWorkTracker-CUSTOMER-HOURS-FIXED.zip" -d GardenWorkTracker_Finished
 
-          echo "Extracted files:"
+          echo "Project contents:"
           find GardenWorkTracker_Finished -maxdepth 3 -type f | sort
 
       - name: Check Android project
         run: |
-          test -f GardenWorkTracker_Finished/settings.gradle || \
-          test -f GardenWorkTracker_Finished/settings.gradle.kts
-
           test -d GardenWorkTracker_Finished/app
+
+          if [ -f GardenWorkTracker_Finished/settings.gradle ]; then
+            echo "settings.gradle found"
+          elif [ -f GardenWorkTracker_Finished/settings.gradle.kts ]; then
+            echo "settings.gradle.kts found"
+          else
+            echo "ERROR: Android project settings file missing"
+            exit 1
+          fi
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
@@ -70,12 +70,11 @@ jobs:
           APK=$(find GardenWorkTracker_Finished -type f -name "*.apk" | head -n 1)
 
           if [ -z "$APK" ]; then
-            echo "ERROR: No APK was produced"
-            find GardenWorkTracker_Finished -type f | sort
+            echo "ERROR: No APK found"
             exit 1
           fi
 
-          echo "APK found: $APK"
+          echo "APK: $APK"
           cp "$APK" GardenWorkTracker-CUSTOMER-HOURS-FIXED-APK.apk
 
       - name: Upload APK
